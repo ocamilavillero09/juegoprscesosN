@@ -1,28 +1,26 @@
 document.addEventListener("DOMContentLoaded", () => {
-    document.getElementById("player-form").addEventListener("submit", startGame);
-    document.getElementById("restart-game").addEventListener("click", restartGame);
+    const startButton = document.getElementById("start-button");
+
+    startButton.addEventListener("click", function(event) {
+        event.preventDefault();
+        startGame();
+    });
 });
 
-let players = [];
-let currentPlayerIndex = 0;
-let score = 0;
-let currentStation = 1;
+function startGame() {
+    const player1 = document.getElementById("player1").value;
+    const player2 = document.getElementById("player2").value;
+    const player3 = document.getElementById("player3").value;
 
-function startGame(event) {
-    event.preventDefault();
-    players = [
-        document.getElementById("player1").value,
-        document.getElementById("player2").value,
-        document.getElementById("player3").value
-    ];
-    currentPlayerIndex = 0;
-    score = 0;
-    currentStation = 1;
+    if (player1 && player2 && player3) {
+        document.getElementById("welcome-section").style.display = "none";
+        document.getElementById("game-section").style.display = "block";
 
-    document.getElementById("welcome-section").style.display = "none";
-    document.getElementById("game-section").style.display = "block";
-    document.getElementById("welcome-message").textContent = `¡Hola ${players[currentPlayerIndex]}! Bienvenido a Quién Quiere Ser Millonario.`;
-    generateQuestion();
+        document.getElementById("welcome-message").textContent = `¡Hola ${player1}, ${player2} y ${player3}! Bienvenidos a ¿Quién Quiere Ser Millonario?`;
+        generateQuestion();
+    } else {
+        alert("Por favor, ingresa los nombres de todos los jugadores.");
+    }
 }
 
 function generateQuestion() {
