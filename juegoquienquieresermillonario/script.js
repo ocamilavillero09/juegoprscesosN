@@ -1,18 +1,31 @@
 document.addEventListener("DOMContentLoaded", () => {
     const startButton = document.getElementById("start-button");
+    const restartButton = document.getElementById("restart-game");
+    const retireYesButton = document.getElementById("retire-yes");
+    const retireNoButton = document.getElementById("retire-no");
+    const use5050Button = document.getElementById("use-5050");
+    const changeQuestionButton = document.getElementById("use-change-question");
 
     startButton.addEventListener("click", function(event) {
         event.preventDefault();
         startGame();
     });
+
+    restartButton.addEventListener("click", restartGame);
+    retireYesButton.addEventListener("click", retireGame);
+    retireNoButton.addEventListener("click", continueGame);
+    use5050Button.addEventListener("click", use5050);
+    changeQuestionButton.addEventListener("click", changeQuestion);
 });
 
 let players = [];
-let currentPlayerIndex = 0;
-let score = 0;
 let currentStation = 1;
+let score = 0;
+let currentQuestion = null;
 let used5050 = false;
 let usedChangeQuestion = false;
+
+const fibonacci = [1, 2, 3, 5, 8, 13, 21, 34, 55, 89];
 
 let questions = [
     {
@@ -48,6 +61,8 @@ function startGame() {
         
         currentStation = 1;
         score = 0;
+        used5050 = false;
+        usedChangeQuestion = false;
         updateScoreAndStation();
         generateQuestion();
     } else {
@@ -56,31 +71,28 @@ function startGame() {
 }
 
 function generateQuestion() {
-    if (currentStation <= 10) {
+    if (currentStation <= 10 && questions.length > 0) {
         let questionIndex = Math.floor(Math.random() * questions.length);
-        let questionData = questions[questionIndex];
+        currentQuestion = questions.splice(questionIndex, 1)[0];
 
-        document.getElementById("question").textContent = questionData.question;
+        document.getElementById("question").textContent = currentQuestion.question;
 
         let answersContainer = document.getElementById("answers");
         answersContainer.innerHTML = "";
 
-        questionData.answers.forEach((answer, index) => {
+        currentQuestion.answers.forEach((answer, index) => {
             let button = document.createElement("button");
             button.textContent = answer;
-            button.addEventListener("click", () => checkAnswer(index, questionData.correctAnswer));
+            button.addEventListener("click", () => checkAnswer(index));
             answersContainer.appendChild(button);
         });
-
-        // Eliminar la pregunta usada para que no se repita
-        questions.splice(questionIndex, 1);
     } else {
         endGame("¡Felicidades, has completado el juego!");
     }
 }
 
-function checkAnswer(selectedAnswer, correctAnswer) {
-    if (selectedAnswer === correctAnswer) {
+function checkAnswer(selectedAnswer) {
+    if (selectedAnswer === currentQuestion.correctAnswer) {
         score += fibonacci[currentStation - 1];
         currentStation++;
 
@@ -123,19 +135,8 @@ function endGame(message) {
 }
 
 function restartGame() {
-    document.getElementById("game-section").style.display = "none";
     document.getElementById("end-section").style.display = "none";
     document.getElementById("welcome-section").style.display = "block";
-
-    document.getElementById("player-form").reset();
-
-    // Resetear las variables y preguntas
-    currentStation = 1;
-    score = 0;
-    used5050 = false;
-    usedChangeQuestion = false;
-
-    // Reestablece las preguntas
     questions = [
         {
             question: "¿Cuál es el planeta más cercano al Sol?",
@@ -154,4 +155,32 @@ function restartGame() {
         }
         // Agrega más preguntas según sea necesario
     ];
+}
+
+function use5050() {
+    if (!used5050) {
+        let incorrectAnswers = [];
+        for (let i = 0; i < currentQuestion.answers.length; i++) {
+            if (i !== currentQuestion.correctAnswer) {
+                incorrectAnswers.push(i);
+            }
+        }
+        incorrectAnswers.sort(() => Math.random() - 0.5).splice(0, 2).forEach(index => {
+            document.querySelectorAll("#answers button")[index].disabled = true;
+        });
+        used5050 = true;
+        use5050Button.disabled = true;
+    } else {
+        alert("Ohh lo siento ya no la puedes usar");
+    }
+}
+
+function changeQuestion() {
+    if (!usedChangeQuestion) {
+        generateQuestion();
+        usedChangeQuestion = true;
+        changeQuestionButton.disabled = true;
+    } else {
+        alert("Ohh lo siento ya no la puedes usar");
+    }
 }
