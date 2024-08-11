@@ -1,8 +1,12 @@
 document.getElementById("player-form").addEventListener("submit", startGame);
 document.getElementById("use-5050").addEventListener("click", useHelp5050);
 document.getElementById("use-change-question").addEventListener("click", changeQuestion);
+document.getElementById("retire-yes").addEventListener("click", retireGame);
+document.getElementById("retire-no").addEventListener("click", continueGame);
+document.getElementById("restart-game").addEventListener("click", restartGame);
 
-let player = "";
+let players = [];
+let currentPlayerIndex = 0;
 let score = 0;
 let currentStation = 1;
 let used5050 = false;
@@ -22,10 +26,20 @@ let currentQuestion = {};
 
 function startGame(event) {
     event.preventDefault();
-    player = document.getElementById("player").value;
+    players = [
+        document.getElementById("player1").value,
+        document.getElementById("player2").value,
+        document.getElementById("player3").value
+    ];
+    currentPlayerIndex = 0;
+    score = 0;
+    currentStation = 1;
+    used5050 = false;
+    usedChangeQuestion = false;
+    usedQuestions = [];
     document.getElementById("welcome-section").style.display = "none";
     document.getElementById("game-section").style.display = "block";
-    document.getElementById("welcome-message").textContent = `¡Hola ${player}! Bienvenido a Quién Quiere Ser Millonario.`;
+    document.getElementById("welcome-message").textContent = `¡Hola ${players[currentPlayerIndex]}! Bienvenido a Quién Quiere Ser Millonario.`;
     generateQuestion();
 }
 
@@ -139,12 +153,29 @@ function endGame(win, message) {
     document.getElementById("end-section").style.display = "block";
     
     if (win) {
-        document.getElementById("end-message").textContent = message || `¡Felicidades, has ganado con ${score} puntos!`;
+        document.getElementById("end-message").textContent = message || `¡Felicidades ${players[currentPlayerIndex]}, has ganado con ${score} puntos!`;
     } else {
-        document.getElementById("end-message").textContent = "Lo siento, has perdido.";
+        document.getElementById("end-message").textContent = `Lo siento ${players[currentPlayerIndex]}, has perdido.`;
     }
 }
 
 function restartGame() {
-    location.reload();
+    // Resetear todas las variables a su estado inicial
+    currentPlayerIndex = 0;
+    score = 0;
+    currentStation = 1;
+    used5050 = false;
+    usedChangeQuestion = false;
+    usedQuestions = [];
+
+    // Resetear la interfaz
+    document.getElementById("score").textContent = `Puntaje: ${score}`;
+    document.getElementById("station").textContent = `Estación: ${currentStation}`;
+    document.getElementById("use-5050").disabled = false;
+    document.getElementById("use-change-question").disabled = false;
+
+    // Volver a la pantalla de bienvenida para reiniciar el juego con nuevos jugadores
+    document.getElementById("end-section").style.display = "none";
+    document.getElementById("welcome-section").style.display = "block";
+    document.getElementById("game-section").style.display = "none";
 }
