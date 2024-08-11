@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quién Quiere Ser Millonario</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <div id="welcome-section">
+            <h1>¡Bienvenidos a Quién Quiere Ser Millonario!</h1>
+            <form id="player-form">
+                <label for="player">Ingresa el nombre del jugador:</label>
+                <input type="text" id="player" required>
+                <br>
+                <button type="submit">Iniciar Juego</button>
+            </form>
+        </div>
+
+        <div id="game-section" style="display: none;">
+            <h2 id="welcome-message"></h2>
+            <p>Reglas del juego:</p>
+            <ul>
+                <li>Las ayudas disponibles son: 50/50, Cambio de Pregunta.</li>
+                <li>Puedes retirarte en las estaciones 5 y 7 y llevarte el puntaje acumulado.</li>
+                <li>Si respondes mal en esas estaciones, perderás todo y el juego terminará.</li>
+                <li>El puntaje se acumula según la serie Fibonacci: 1, 2, 3, 5, 8, 13, 21, 34, 55, 89.</li>
+            </ul>
+
+            <div id="question-section">
+                <p id="question"></p>
+                <div id="answers"></div>
+                <button id="use-5050">50/50</button>
+                <button id="use-change-question">Cambio de Pregunta</button>
+                <p id="score">Puntaje: 0</p>
+                <p id="station">Estación: 1</p>
+            </div>
+
+            <div id="retire-section" style="display: none;">
+                <p>¿Deseas retirarte y llevarte el puntaje acumulado?</p>
+                <button id="retire-yes">Sí, retirarme</button>
+                <button id="retire-no">No, seguir jugando</button>
+            </div>
+
+            <div id="end-section" style="display: none;">
+                <p id="end-message"></p>
+                <button id="restart-game">Volver a iniciar</button>
+            </div>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
