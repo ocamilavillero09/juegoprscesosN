@@ -1,9 +1,11 @@
-document.getElementById("player-form").addEventListener("submit", startGame);
-document.getElementById("use-5050").addEventListener("click", useHelp5050);
-document.getElementById("use-change-question").addEventListener("click", changeQuestion);
-document.getElementById("retire-yes").addEventListener("click", retireGame);
-document.getElementById("retire-no").addEventListener("click", continueGame);
-document.getElementById("restart-game").addEventListener("click", restartGame);
+document.addEventListener("DOMContentLoaded", () => {
+    document.getElementById("player-form").addEventListener("submit", startGame);
+    document.getElementById("use-5050").addEventListener("click", useHelp5050);
+    document.getElementById("use-change-question").addEventListener("click", changeQuestion);
+    document.getElementById("retire-yes").addEventListener("click", retireGame);
+    document.getElementById("retire-no").addEventListener("click", continueGame);
+    document.getElementById("restart-game").addEventListener("click", restartGame);
+});
 
 let players = [];
 let currentPlayerIndex = 0;
@@ -171,11 +173,4 @@ function restartGame() {
     // Resetear la interfaz
     document.getElementById("score").textContent = `Puntaje: ${score}`;
     document.getElementById("station").textContent = `Estación: ${currentStation}`;
-    document.getElementById("use-5050").disabled = false;
-    document.getElementById("use-change-question").disabled = false;
-
-    // Volver a la pantalla de bienvenida para reiniciar el juego con nuevos jugadores
-    document.getElementById("end-section").style.display = "none";
-    document.getElementById("welcome-section").style.display = "block";
-    document.getElementById("game-section").style.display = "none";
-}
+    document.getElementById
