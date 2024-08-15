@@ -7,408 +7,325 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-color: #1a1a40; /* Azul oscuro */
-            color: white;
             text-align: center;
-            padding: 20px;
+            margin: 20px;
         }
-        .container {
-            background-color: #333366;
-            border-radius: 10px;
-            padding: 20px;
-            max-width: 600px;
-            margin: auto;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+        .hidden {
+            display: none;
         }
-        .question {
-            font-size: 1.5em;
-            margin-bottom: 20px;
-        }
-        .option {
-            display: block;
-            margin: 10px 0;
-            padding: 10px;
-            background-color: #0056b3;
+        .button {
+            background-color: #007bff;
             color: white;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
-        .option:hover {
-            background-color: #004080;
-        }
-        #score {
-            margin-top: 20px;
-            font-size: 1.2em;
-        }
-        #message, #endMessage, #loseMessage, #transitionMessage {
-            margin-top: 20px;
-            font-size: 1.2em;
-            color: red;
-        }
-        input[type="text"], select {
-            padding: 5px;
-            margin: 10px;
-            border-radius: 5px;
             border: none;
-        }
-        button {
             padding: 10px 20px;
-            background-color: #0056b3;
-            color: white;
-            border: none;
-            border-radius: 5px;
+            font-size: 16px;
             cursor: pointer;
-        }
-        button:hover {
-            background-color: #004080;
-        }
-        .lifeline {
+            border-radius: 5px;
             margin: 5px;
         }
-        .lifeline-used {
-            background-color: grey;
-            cursor: not-allowed;
+        .button:hover {
+            background-color: #0056b3;
         }
-        #ranking {
-            margin-top: 20px;
-            text-align: left;
-        }
-        #ranking table {
-            width: 100%;
+        #rankingTable {
+            width: 50%;
+            margin: auto;
             border-collapse: collapse;
         }
-        #ranking th, #ranking td {
-            border: 1px solid white;
-            padding: 10px;
+        #rankingTable, #rankingTable th, #rankingTable td {
+            border: 1px solid black;
         }
-        #ranking th {
-            background-color: #0056b3;
+        #rankingTable th, #rankingTable td {
+            padding: 10px;
+            text-align: center;
         }
     </style>
 </head>
 <body>
-
-<div class="container">
-    <h1>¿Quién quiere ser millonario?</h1>
-
     <div id="welcome">
-        <p>Bienvenido al juego. ¡Buena suerte!</p>
-        <p>Introduce la cantidad de jugadores y elige la dificultad para comenzar:</p>
-        <input type="number" id="playersCount" min="1" max="10" placeholder="Número de jugadores">
-        <br>
-        <label for="difficulty">Dificultad:</label>
-        <select id="difficulty">
-            <option value="easy">Fácil</option>
-            <option value="medium">Media</option>
-            <option value="hard">Difícil</option>
-        </select>
-        <br>
-        <button onclick="startGame()">Comenzar</button>
+        <h1>Bienvenido a ¿Quién quiere ser millonario?</h1>
+        <label for="playersCount">Número de jugadores:</label>
+        <input type="number" id="playersCount" min="1">
+        <button class="button" onclick="showPlayerNames()">Siguiente</button>
     </div>
 
-    <div id="game" style="display:none;">
-        <div id="playerNameDisplay">Jugador: </div>
-        <div id="score">Puntos: 0</div>
-        <div class="question" id="question"></div>
-        <div class="options">
-            <div class="option" onclick="checkAnswer(1)" id="option1"></div>
-            <div class="option" onclick="checkAnswer(2)" id="option2"></div>
-            <div class="option" onclick="checkAnswer(3)" id="option3"></div>
-            <div class="option" onclick="checkAnswer(4)" id="option4"></div>
-        </div>
-        <div id="lifelines">
-            <button class="lifeline" id="lifeline5050" onclick="use5050()">50/50</button>
-            <button class="lifeline" id="lifelineSwitch" onclick="switchQuestion()">Cambio de Pregunta</button>
-        </div>
-        <div id="message"></div>
-        <div id="retireButton" style="display:none;">
-            <button onclick="retire()">Retirarse</button>
-        </div>
-        <div id="nextPlayerButton" style="display:none;">
-            <button onclick="nextPlayer()">Siguiente Jugador</button>
-        </div>
-        <div id="questionNumber" style="margin-top: 20px;"></div>
+    <div id="playerNamesForm" class="hidden">
+        <h2>Ingrese los nombres de los jugadores</h2>
+        <div id="playerNamesContainer"></div>
+        <button class="button" onclick="startGame()">Iniciar Juego</button>
     </div>
 
-    <div id="loseScreen" style="display:none;">
-        <div id="loseMessage"></div>
-        <div id="nextPlayerButton" style="display:block;">
-            <button onclick="nextPlayer()">Siguiente Jugador</button>
+    <div id="game" class="hidden">
+        <h2 id="playerNameDisplay">Jugador: </h2>
+        <p id="question"></p>
+        <div>
+            <button class="button" onclick="checkAnswer(1)" id="option1"></button>
+            <button class="button" onclick="checkAnswer(2)" id="option2"></button>
+            <button class="button" onclick="checkAnswer(3)" id="option3"></button>
+            <button class="button" onclick="checkAnswer(4)" id="option4"></button>
         </div>
+        <p id="message"></p>
+        <button class="button" onclick="useLifeline50_50()" id="lifeline50_50">50/50</button>
+        <button class="button" onclick="switchQuestion()" id="switchQuestion">Cambiar Pregunta</button>
+        <button class="button hidden" id="retireButton" onclick="retire()">Retirarse</button>
+        <p id="score">Puntos: 0</p>
     </div>
 
-    <div id="transitionScreen" style="display:none;">
-        <div id="transitionMessage"></div>
-        <div id="nextPlayerButton" style="display:block;">
-            <button onclick="nextPlayer()">Siguiente Jugador</button>
-        </div>
+    <div id="loseScreen" class="hidden">
+        <h2>¡Perdiste!</h2>
+        <button class="button" onclick="nextPlayer()">Siguiente Jugador</button>
     </div>
 
-    <div id="endGameScreen" style="display:none;">
-        <div id="endMessage"></div>
-        <div id="ranking">
-            <h2>Ranking de Jugadores</h2>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Jugador</th>
-                        <th>Puntos</th>
-                    </tr>
-                </thead>
-                <tbody id="rankingTableBody"></tbody>
-            </table>
-            <button onclick="restartGame()">Reiniciar Juego</button>
-            <button onclick="downloadScore()">Descargar Puntuación</button>
-        </div>
+    <div id="endGameScreen" class="hidden">
+        <h2 id="endMessage"></h2>
+        <button class="button" onclick="restartGame()">Reiniciar Juego</button>
+        <button class="button" onclick="downloadScore()">Descargar Ranking</button>
     </div>
-</div>
 
-<script>
-    let currentQuestionIndex = 0;
-    let score = 0;
-    let playerName = "";
-    let selectedDifficulty = "";
-    let lifeline5050Used = false;
-    let switchUsed = false;
-    let players = [];
-    let currentPlayerIndex = 0;
-    let playerScores = {};
+    <div id="ranking" class="hidden">
+        <h2>Ranking</h2>
+        <table id="rankingTable">
+            <thead>
+                <tr>
+                    <th>Jugador</th>
+                    <th>Puntos</th>
+                </tr>
+            </thead>
+            <tbody id="rankingTableBody"></tbody>
+        </table>
+    </div>
 
-    const questions = {
-        easy: [
-            // 15 preguntas para el nivel fácil
-            { question: "¿Cuál es la capital de Francia?", options: ["Madrid", "Londres", "París", "Roma"], correct: 3 },
-            { question: "¿Cuál es el río más largo del mundo?", options: ["Nilo", "Amazonas", "Yangtsé", "Misisipi"], correct: 2 },
-            { question: "¿Qué país tiene la mayor población del mundo?", options: ["India", "Estados Unidos", "China", "Rusia"], correct: 3 },
-            { question: "¿Cuál es el océano más grande del mundo?", options: ["Atlántico", "Pacífico", "Índico", "Ártico"], correct: 2 },
-            { question: "¿Cuál es el idioma más hablado en el mundo?", options: ["Inglés", "Chino Mandarín", "Español", "Hindú"], correct: 2 },
-            { question: "¿Cuál es el país más grande del mundo en superficie?", options: ["Canadá", "Rusia", "China", "Estados Unidos"], correct: 2 },
-            { question: "¿Cuál es el continente más pequeño del mundo?", options: ["Asia", "Europa", "Oceanía", "África"], correct: 3 },
-            { question: "¿En qué país se encuentra el Machu Picchu?", options: ["Perú", "Bolivia", "Chile", "Colombia"], correct: 1 },
-            { question: "¿Cuál es el animal terrestre más rápido?", options: ["León", "Elefante", "Gacela", "Cheetah"], correct: 4 },
-            { question: "¿Cuál es la capital de Japón?", options: ["Seúl", "Beijing", "Tokio", "Osaka"], correct: 3 },
-            { question: "¿Cuál es el sistema operativo más utilizado en el mundo?", options: ["Linux", "Windows", "MacOS", "Android"], correct: 2 },
-            { question: "¿Quién escribió 'Don Quijote de la Mancha'?", options: ["Miguel de Cervantes", "William Shakespeare", "Gabriel García Márquez", "Jorge Luis Borges"], correct: 1 },
-            { question: "¿Cuál es la montaña más alta del mundo?", options: ["K2", "Mont Blanc", "Everest", "Kangchenjunga"], correct: 3 },
-            { question: "¿Cuál es la fórmula química del agua?", options: ["CO2", "H2O", "NaCl", "CH4"], correct: 2 },
-            { question: "¿Cuál es el planeta más cercano al sol?", options: ["Venus", "Mercurio", "Marte", "Tierra"], correct: 2 }
-        ],
-        medium: [
-            // 15 preguntas para el nivel medio
-            { question: "¿Qué elemento químico tiene el símbolo Au?", options: ["Oro", "Plata", "Cobre", "Hierro"], correct: 1 },
-            { question: "¿En qué año terminó la Segunda Guerra Mundial?", options: ["1941", "1943", "1945", "1947"], correct: 3 },
-            { question: "¿Cuál es la capital de Canadá?", options: ["Toronto", "Vancouver", "Montreal", "Ottawa"], correct: 4 },
-            { question: "¿Quién pintó la Mona Lisa?", options: ["Vincent van Gogh", "Pablo Picasso", "Leonardo da Vinci", "Claude Monet"], correct: 3 },
-            { question: "¿Cuál es el idioma oficial de Brasil?", options: ["Español", "Inglés", "Portugués", "Francés"], correct: 3 },
-            { question: "¿Cuál es el continente con mayor número de países?", options: ["África", "Asia", "Europa", "América"], correct: 1 },
-            { question: "¿En qué ciudad se encuentra el Coliseo?", options: ["Roma", "Atenas", "Estambul", "Alejandría"], correct: 1 },
-            { question: "¿Qué es el ADN?", options: ["Ácido desoxirribonucleico", "Ácido ribonucleico", "Proteína", "Carbohidrato"], correct: 1 },
-            { question: "¿Cuál es la fórmula química del cloruro de sodio?", options: ["NaCl", "H2O", "CO2", "HCl"], correct: 1 },
-            { question: "¿Quién fue el primer hombre en caminar sobre la luna?", options: ["Buzz Aldrin", "Neil Armstrong", "Michael Collins", "Yuri Gagarin"], correct: 2 },
-            { question: "¿Cuál es el capital de Australia?", options: ["Sídney", "Melbourne", "Canberra", "Brisbane"], correct: 3 },
-            { question: "¿Qué guerra se libró entre 1914 y 1918?", options: ["Primera Guerra Mundial", "Segunda Guerra Mundial", "Guerra de Vietnam", "Guerra de Corea"], correct: 1 },
-            { question: "¿Qué planeta es conocido como el planeta rojo?", options: ["Marte", "Júpiter", "Saturno", "Urano"], correct: 1 },
-            { question: "¿En qué país se originó el sushi?", options: ["Japón", "China", "Corea del Sur", "Tailandia"], correct: 1 },
-            { question: "¿Cuál es el río más largo de Europa?", options: ["Danubio", "Rin", "Volga", "Loira"], correct: 3 }
-        ],
-        hard: [
-            // 15 preguntas para el nivel difícil
-            { question: "¿Quién escribió 'Cien años de soledad'?", options: ["Gabriel García Márquez", "Julio Cortázar", "Mario Vargas Llosa", "Carlos Fuentes"], correct: 1 },
-            { question: "¿Cuál es la capital de Mongolia?", options: ["Ulaanbaatar", "Astana", "Seúl", "Lima"], correct: 1 },
-            { question: "¿Qué es la teoría del caos?", options: ["Una teoría matemática", "Una teoría física", "Una teoría biológica", "Una teoría económica"], correct: 1 },
-            { question: "¿Cuál es la moneda oficial de Suiza?", options: ["Euro", "Franco Suizo", "Dólar", "Yen"], correct: 2 },
-            { question: "¿Cuál es el primer elemento de la tabla periódica?", options: ["Hidrógeno", "Helio", "Oxígeno", "Carbono"], correct: 1 },
-            { question: "¿En qué año se fundó la NASA?", options: ["1958", "1961", "1969", "1972"], correct: 1 },
-            { question: "¿Cuál es el satélite natural más grande del sistema solar?", options: ["Ganimedes", "Titán", "Luna", "Europa"], correct: 1 },
-            { question: "¿Qué filósofo escribió 'La República'?", options: ["Platón", "Aristóteles", "Sócrates", "Epicuro"], correct: 1 },
-            { question: "¿Quién fue el primer emperador de China?", options: ["Qin Shi Huang", "Liu Bei", "Sun Yat-sen", "Genghis Khan"], correct: 1 },
-            { question: "¿Cuál es el nombre del famoso cráter en la luna?", options: ["Cráter Copérnico", "Cráter Aristóteles", "Cráter Tycho", "Cráter Galileo"], correct: 3 },
-            { question: "¿En qué año se construyó la Gran Muralla China?", options: ["216 a.C.", "400 d.C.", "1200 d.C.", "1600 d.C."], correct: 1 },
-            { question: "¿Cuál es el símbolo químico del oro?", options: ["Au", "Ag", "Pb", "Fe"], correct: 1 },
-            { question: "¿Qué es un quasar?", options: ["Una estrella de neutrones", "Un tipo de galaxia", "Una fuente de energía en el universo", "Un agujero negro"], correct: 3 },
-            { question: "¿Cuál es el continente con la mayor cantidad de países independientes?", options: ["África", "Asia", "Europa", "América"], correct: 1 },
-            { question: "¿Qué científico desarrolló la teoría de la evolución por selección natural?", options: ["Charles Darwin", "Gregor Mendel", "Louis Pasteur", "Isaac Newton"], correct: 1 }
-        ]
-    };
+    <script>
+        const questions = {
+            easy: [
+                { question: "¿Cuál es el continente más grande?", options: ["Asia", "África", "América", "Europa"], correct: 1 },
+                { question: "¿Cuál es la capital de Francia?", options: ["Berlín", "Madrid", "París", "Roma"], correct: 3 },
+                { question: "¿Qué tipo de energía produce el Sol?", options: ["Energía cinética", "Energía potencial", "Energía térmica", "Energía nuclear"], correct: 4 },
+                { question: "¿En qué país se encuentra el Taj Mahal?", options: ["India", "Pakistán", "Bangladesh", "Nepal"], correct: 1 },
+                { question: "¿Cuál es el principal gas responsable del efecto invernadero?", options: ["Oxígeno", "Nitrógeno", "Dióxido de carbono", "Metano"], correct: 3 },
+                { question: "¿Cuál es la moneda oficial de Japón?", options: ["Yuan", "Won", "Yen", "Dólar"], correct: 3 },
+                { question: "¿Qué país ganó la Copa Mundial de Fútbol en 2018?", options: ["Alemania", "Brasil", "Francia", "Argentina"], correct: 3 }
+            ],
+            hard: [
+                { question: "¿Cuál es la teoría que explica el origen del universo?", options: ["Teoría del Big Bang", "Teoría de la Relatividad", "Teoría de la Evolución", "Teoría de la Gravedad"], correct: 1 },
+                { question: "¿Qué científico propuso la teoría de la relatividad?", options: ["Isaac Newton", "Galileo Galilei", "Albert Einstein", "Niels Bohr"], correct: 3 },
+                { question: "¿En qué país se encuentra el Desierto de Atacama?", options: ["Perú", "Chile", "Argentina", "Bolivia"], correct: 2 },
+                { question: "¿Qué tipo de estrella es el Sol?", options: ["Enana blanca", "Enana roja", "Estrella de secuencia principal", "Supergigante"], correct: 3 },
+                { question: "¿Qué filósofo griego es conocido por su método de interrogación?", options: ["Platón", "Sócrates", "Aristóteles", "Epicuro"], correct: 2 },
+                { question: "¿Qué país tiene la mayor cantidad de islas en el mundo?", options: ["Suecia", "Noruega", "Canadá", "Australia"], correct: 3 },
+                { question: "¿Quién escribió 'Cien años de soledad'?", options: ["Gabriel García Márquez", "Mario Vargas Llosa", "Jorge Luis Borges", "Isabel Allende"], correct: 1 },
+                { question: "¿Cuál es el elemento químico más abundante en el universo?", options: ["Helio", "Oxígeno", "Carbono", "Hidrógeno"], correct: 4 },
+                { question: "¿Cuál es el número primo más pequeño mayor que 20?", options: ["23", "29", "31", "37"], correct: 1 },
+                { question: "¿Cuál es la capital de Mongolia?", options: ["Ulaanbaatar", "Beijing", "Seúl", "Astana"], correct: 1 },
+                { question: "¿Qué es el 'Bosón de Higgs'?", options: ["Una partícula subatómica", "Un tipo de energía", "Un campo magnético", "Un elemento químico"], correct: 1 },
+                { question: "¿En qué año se fundó la ONU?", options: ["1945", "1950", "1920", "1965"], correct: 1 },
+                { question: "¿Qué es el 'Cálculo' en matemáticas?", options: ["Una rama de la física", "Una teoría matemática", "Un método para resolver ecuaciones", "Una técnica de análisis"], correct: 4 },
+                { question: "¿Cuál es el órgano más grande del cuerpo humano?", options: ["El corazón", "El hígado", "La piel", "Los pulmones"], correct: 3 }
+            ]
+        };
 
-    function startGame() {
-        const count = parseInt(document.getElementById('playersCount').value);
-        selectedDifficulty = document.getElementById('difficulty').value;
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let playerScores = {};
+        let players = [];
+        let currentPlayerIndex = 0;
+        let playerName = '';
+        let selectedDifficulty = 'easy';
+        let lifeline5050Used = false;
+        let switchUsed = false;
 
-        if (isNaN(count) || count < 1) {
-            alert("Por favor, introduce un número válido de jugadores.");
-            return;
-        }
-
-        players = [];
-        for (let i = 0; i < count; i++) {
-            const name = prompt(`Introduce el nombre del Jugador ${i + 1}`);
-            if (name) {
-                players.push(name);
-                playerScores[name] = 0; // Inicializar el puntaje del jugador
+        function showPlayerNames() {
+            const playersCount = parseInt(document.getElementById('playersCount').value);
+            if (isNaN(playersCount) || playersCount <= 0) {
+                alert('Por favor, ingresa un número válido de jugadores.');
+                return;
             }
-        }
 
-        if (players.length === 0) {
-            alert("No se han introducido jugadores.");
-            return;
-        }
+            const playerNamesContainer = document.getElementById('playerNamesContainer');
+            playerNamesContainer.innerHTML = '';
 
-        currentPlayerIndex = 0;
-        playerName = players[currentPlayerIndex];
-        document.getElementById('playerNameDisplay').innerText = `Jugador actual: ${playerName}`;
-        document.getElementById('game').style.display = "block";
-        document.getElementById('welcome').style.display = "none";
-        shuffleQuestions();
-        showQuestion();
-    }
-
-    function shuffleQuestions() {
-        const questionList = questions[selectedDifficulty];
-        for (let i = questionList.length - 1; i > 0; i--) {
-            const j = Math.floor(Math.random() * (i + 1));
-            [questionList[i], questionList[j]] = [questionList[j], questionList[i]];
-        }
-        currentQuestionIndex = 0;
-    }
-
-    function showQuestion() {
-        if (currentQuestionIndex >= questions[selectedDifficulty].length) {
-            showTransitionScreen();
-            return;
-        }
-        const q = questions[selectedDifficulty][currentQuestionIndex];
-        document.getElementById('question').innerText = q.question;
-        document.getElementById('option1').innerText = q.options[0];
-        document.getElementById('option2').innerText = q.options[1];
-        document.getElementById('option3').innerText = q.options[2];
-        document.getElementById('option4').innerText = q.options[3];
-        document.getElementById('questionNumber').innerText = `Pregunta ${currentQuestionIndex + 1} de ${questions[selectedDifficulty].length}`;
-    
-        // Mostrar el botón de retiro en las estaciones 5 y 7
-        if (currentQuestionIndex === 4 || currentQuestionIndex === 6) {
-            document.getElementById('retireButton').style.display = "block";
-        } else {
-            document.getElementById('retireButton').style.display = "none";
-        }
-    }
-
-    function checkAnswer(option) {
-        const q = questions[selectedDifficulty][currentQuestionIndex];
-        if (option === q.correct) {
-            score += 10; // Incrementa el puntaje en 10 puntos por respuesta correcta
-            document.getElementById('score').innerText = `Puntos: ${score}`;
-            currentQuestionIndex++;
-            if (currentQuestionIndex >= questions[selectedDifficulty].length) {
-                showTransitionScreen();
-            } else {
-                showQuestion();
+            for (let i = 0; i < playersCount; i++) {
+                const input = document.createElement('input');
+                input.type = 'text';
+                input.placeholder = `Nombre del Jugador ${i + 1}`;
+                input.id = `player${i}`;
+                playerNamesContainer.appendChild(input);
+                playerNamesContainer.appendChild(document.createElement('br'));
             }
-        } else {
-            // Respuesta incorrecta en estaciones 5 y 7
-            if (currentQuestionIndex === 4 || currentQuestionIndex === 6) {
-                score = 0;
-                document.getElementById('score').innerText = `Puntos: ${score}`;
+
+            document.getElementById('playerNamesForm').classList.remove('hidden');
+            document.getElementById('welcome').classList.add('hidden');
+        }
+
+        function startGame() {
+            const playersCount = parseInt(document.getElementById('playersCount').value);
+            players = [];
+            for (let i = 0; i < playersCount; i++) {
+                const playerNameInput = document.getElementById(`player${i}`);
+                players.push({ name: playerNameInput.value, score: 0 });
             }
-            showLoseScreen();
+
+            document.getElementById('playerNamesForm').classList.add('hidden');
+            document.getElementById('game').classList.remove('hidden');
+            loadQuestion();
         }
-    }
 
-    function use5050() {
-        if (lifeline5050Used) return;
-        lifeline5050Used = true;
-        const q = questions[selectedDifficulty][currentQuestionIndex];
-        const options = [1, 2, 3, 4];
-        options.splice(q.correct - 1, 1); // Elimina la opción correcta
-        const removeOptions = [];
-        while (removeOptions.length < 2) {
-            const randIndex = Math.floor(Math.random() * options.length);
-            removeOptions.push(options.splice(randIndex, 1)[0]);
-        }
-        for (let i = 1; i <= 4; i++) {
-            if (removeOptions.includes(i)) {
-                document.getElementById(`option${i}`).innerText = "";
-            }
-        }
-        document.getElementById('lifeline5050').classList.add('lifeline-used');
-    }
+        function loadQuestion() {
+            const questionsList = questions[selectedDifficulty];
+            currentQuestionIndex = Math.floor(Math.random() * questionsList.length);
+            const question = questionsList[currentQuestionIndex];
 
-    function switchQuestion() {
-        if (switchUsed) return;
-        switchUsed = true;
-        currentQuestionIndex++;
-        if (currentQuestionIndex >= questions[selectedDifficulty].length) {
-            showTransitionScreen();
-        } else {
-            showQuestion();
-        }
-    }
+            document.getElementById('question').innerText = question.question;
+            document.getElementById('option1').innerText = question.options[0];
+            document.getElementById('option2').innerText = question.options[1];
+            document.getElementById('option3').innerText = question.options[2];
+            document.getElementById('option4').innerText = question.options[3];
 
-    function retire() {
-        playerScores[playerName] = score;
-        alert(`Te has retirado con ${score} puntos.`);
-        document.getElementById('game').style.display = "none";
-        showTransitionScreen();
-    }
+            document.getElementById('option1').onclick = () => checkAnswer(1);
+            document.getElementById('option2').onclick = () => checkAnswer(2);
+            document.getElementById('option3').onclick = () => checkAnswer(3);
+            document.getElementById('option4').onclick = () => checkAnswer(4);
 
-    function showLoseScreen() {
-        document.getElementById('loseMessage').innerText = `¡Lo siento, ${playerName}! Has perdido.`;
-        document.getElementById('game').style.display = "none";
-        document.getElementById('loseScreen').style.display = "block";
-    }
+            document.getElementById('message').innerText = '';
+            document.getElementById('score').innerText = `Puntos: ${players[currentPlayerIndex].score}`;
 
-    function showTransitionScreen() {
-        document.getElementById('transitionMessage').innerText = `¡Bien hecho, ${playerName}! Has terminado tus preguntas.`;
-        document.getElementById('game').style.display = "none";
-        document.getElementById('transitionScreen').style.display = "block";
-    }
-
-    function nextPlayer() {
-        if (currentPlayerIndex < players.length - 1) {
-            currentPlayerIndex++;
-            playerName = players[currentPlayerIndex];
-            document.getElementById('playerNameDisplay').innerText = `Jugador actual: ${playerName}`;
-            document.getElementById('score').innerText = `Puntos: ${score}`;
-            document.getElementById('transitionScreen').style.display = "none";
-            document.getElementById('loseScreen').style.display = "none";
-            document.getElementById('game').style.display = "block";
-            document.getElementById('retireButton').style.display = "none";
             lifeline5050Used = false;
             switchUsed = false;
-            showQuestion();
-        } else {
-            endGame();
-        }
-    }
 
-    function endGame() {
-        playerScores[playerName] = score; // Guardar puntaje final del último jugador
-        document.getElementById('endMessage').innerText = "El juego ha terminado. Aquí está el ranking de los jugadores:";
-        document.getElementById('rankingTableBody').innerHTML = Object.keys(playerScores).map(name => 
-            `<tr><td>${name}</td><td>${playerScores[name]}</td></tr>`).join('');
-        document.getElementById('endGameScreen').style.display = "block";
-    }
-    function downloadScore() {
-            let scoreText = "Ranking de Jugadores:\n\n";
-            for (let player in playerScores) {
-                scoreText += `${player}: ${playerScores[player]} puntos\n`;
+            // Habilitar o deshabilitar el botón de retirarse según la estación
+            document.getElementById('retireButton').classList.toggle('hidden', !isRetireButtonEnabled());
+        }
+
+        function isRetireButtonEnabled() {
+            // Habilitar el botón de retirarse solo en las estaciones 5 y 7
+            const station = getCurrentStation();
+            return station === 5 || station === 7;
+        }
+
+        function getCurrentStation() {
+            // Determinar la estación actual en función del índice de la pregunta
+            return Math.floor(currentQuestionIndex / 5) + 1; // Cambiar el divisor según la cantidad de preguntas por estación
+        }
+
+        function checkAnswer(selectedOption) {
+            const question = questions[selectedDifficulty][currentQuestionIndex];
+            if (selectedOption === question.correct) {
+                score += 10;
+                document.getElementById('message').innerText = '¡Correcto!';
+            } else {
+                document.getElementById('message').innerText = 'Incorrecto. ¡Perdiste!';
+                document.getElementById('game').classList.add('hidden');
+                document.getElementById('loseScreen').classList.remove('hidden');
+                return;
+            }
+            players[currentPlayerIndex].score = score;
+            document.getElementById('score').innerText = `Puntos: ${players[currentPlayerIndex].score}`;
+
+            if (questions[selectedDifficulty].length <= 1) {
+                document.getElementById('endMessage').innerText = '¡El juego ha terminado!';
+                document.getElementById('game').classList.add('hidden');
+                document.getElementById('endGameScreen').classList.remove('hidden');
+                updateRanking();
+                return;
             }
 
-            const blob = new Blob([scoreText], { type: 'text/plain' });
-            const link = document.createElement('a');
-            link.href = URL.createObjectURL(blob);
-            link.download = 'puntuaciones.txt';
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-    }
+            loadQuestion();
+        }
 
-    function restartGame() {
-        document.location.reload();
-    }
+        function useLifeline50_50() {
+            if (lifeline5050Used) {
+                alert('La ayuda 50/50 ya ha sido utilizada.');
+                return;
+            }
 
-</script>
+            const question = questions[selectedDifficulty][currentQuestionIndex];
+            const correctOption = question.correct;
 
+            let optionsToRemove = [1, 2, 3, 4].filter(option => option !== correctOption);
+            optionsToRemove = optionsToRemove.sort(() => Math.random() - 0.5).slice(0, 2);
+
+            optionsToRemove.forEach(option => {
+                document.getElementById(`option${option}`).innerText = '';
+                document.getElementById(`option${option}`).onclick = () => {};
+            });
+
+            lifeline5050Used = true;
+        }
+
+        function switchQuestion() {
+            if (switchUsed) {
+                alert('La opción de cambiar pregunta ya ha sido utilizada.');
+                return;
+            }
+
+            loadQuestion();
+            switchUsed = true;
+        }
+
+        function retire() {
+            players[currentPlayerIndex].score = score;
+            document.getElementById('game').classList.add('hidden');
+            document.getElementById('endGameScreen').classList.remove('hidden');
+            document.getElementById('endMessage').innerText = `¡${players[currentPlayerIndex].name} se ha retirado con ${players[currentPlayerIndex].score} puntos!`;
+            updateRanking();
+        }
+
+        function nextPlayer() {
+            players[currentPlayerIndex].score = score; // Guardar el puntaje del jugador actual
+            score = 0; // Reiniciar la puntuación para el siguiente jugador
+            currentPlayerIndex++;
+            if (currentPlayerIndex >= players.length) {
+                currentPlayerIndex = 0;
+            }
+            playerName = players[currentPlayerIndex].name;
+            document.getElementById('playerNameDisplay').innerText = `Jugador: ${playerName}`;
+            document.getElementById('loseScreen').classList.add('hidden');
+            document.getElementById('game').classList.remove('hidden');
+            loadQuestion();
+        }
+
+        function restartGame() {
+            document.getElementById('endGameScreen').classList.add('hidden');
+            document.getElementById('welcome').classList.remove('hidden');
+            document.getElementById('ranking').classList.add('hidden');
+            playerScores = {};
+            currentQuestionIndex = 0;
+            score = 0;
+            lifeline5050Used = false;
+            switchUsed = false;
+            players.forEach(player => player.score = 0); // Reiniciar puntajes de todos los jugadores
+            currentPlayerIndex = 0; // Volver al primer jugador
+        }
+
+        function updateRanking() {
+            const rankingTableBody = document.getElementById('rankingTableBody');
+            rankingTableBody.innerHTML = '';
+
+            players.forEach(player => {
+                const row = document.createElement('tr');
+                const nameCell = document.createElement('td');
+                const scoreCell = document.createElement('td');
+
+                nameCell.innerText = player.name;
+                scoreCell.innerText = player.score;
+
+                row.appendChild(nameCell);
+                row.appendChild(scoreCell);
+                rankingTableBody.appendChild(row);
+            });
+
+            document.getElementById('endGameScreen').classList.add('hidden');
+            document.getElementById('ranking').classList.remove('hidden');
+        }
+
+        function downloadScore() {
+            const blob = new Blob([JSON.stringify(players, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'ranking.json';
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+    </script>
 </body>
 </html>
