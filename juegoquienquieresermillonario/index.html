@@ -7,45 +7,48 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div id="welcome-section">
-        <h1>Bienvenido a ¿Quién Quiere Ser Millonario?</h1>
-        <form id="player-form">
-            <label for="player1">Jugador 1:</label>
-            <input type="text" id="player1" required><br>
-            <label for="player2">Jugador 2:</label>
-            <input type="text" id="player2" required><br>
-            <label for="player3">Jugador 3:</label>
-            <input type="text" id="player3" required><br>
-            <button type="submit" id="start-button">Iniciar Juego</button>
-        </form>
+    <div id="welcome" class="section">
+        <h1>¡Bienvenidos a Quién Quiere Ser Millonario!</h1>
+        <label for="playersCount">Número de jugadores:</label>
+        <input type="number" id="playersCount" min="1" value="1">
+        <button onclick="startGame()">Inicio</button>
     </div>
 
-    <div id="game-section" style="display: none;">
-        <h2 id="welcome-message"></h2>
-        <div id="question-section">
-            <p id="question"></p>
-            <div id="answers"></div>
+    <div id="rules" class="section" style="display:none;">
+        <h2>Reglas del Juego</h2>
+        <ul>
+            <li>Cada jugador puede usar dos ayudas una vez:</li>
+            <ul>
+                <li>50/50: Elimina dos respuestas incorrectas.</li>
+                <li>Cambiar pregunta: Cambia la pregunta actual.</li>
+            </ul>
+            <li>Los jugadores pueden retirarse en las estaciones 5 y 7 con el puntaje acumulado.</li>
+        </ul>
+        <button onclick="startPlayerTurn()">Comenzar a Jugar</button>
+    </div>
+
+    <div id="game" class="section" style="display:none;">
+        <h2 id="playerNameDisplay"></h2>
+        <p id="score"></p>
+        <p id="questionNumber"></p>
+        <p id="question"></p>
+        <div class="options">
+            <button class="option" id="option1" onclick="checkAnswer(0)"></button>
+            <button class="option" id="option2" onclick="checkAnswer(1)"></button>
+            <button class="option" id="option3" onclick="checkAnswer(2)"></button>
+            <button class="option" id="option4" onclick="checkAnswer(3)"></button>
         </div>
-        <div id="score-section">
-            <p id="score">Puntaje: 0</p>
-            <p id="station">Estación: 1</p>
-        </div>
-        <div id="helps-section">
-            <button id="use-5050">50/50</button>
-            <button id="use-change-question">Cambio de Pregunta</button>
+        <p id="message"></p>
+        <div class="controls">
+            <button id="lifeline5050" onclick="useLifeline5050()">50/50</button>
+            <button id="switch" onclick="useSwitch()">Cambiar pregunta</button>
+            <button id="retireButton" onclick="retire()">Retirarse</button>
+            <button id="nextPlayerButton" style="display:none;" onclick="nextPlayer()">Siguiente Jugador</button>
+            <button id="restartButton" style="display:none;" onclick="restartGame()">Reiniciar Juego</button>
         </div>
     </div>
 
-    <div id="retire-section" style="display: none;">
-        <p>¿Quieres retirarte del juego?</p>
-        <button id="retire-yes">Sí, me retiro</button>
-        <button id="retire-no">No, continuar</button>
-    </div>
-
-    <div id="end-section" style="display: none;">
-        <p id="end-message"></p>
-        <button id="restart-game">Volver a iniciar</button>
-    </div>
+    <button id="exportButton" style="display:none;" onclick="exportToExcel()">Exportar Puntuaciones a Excel</button>
 
     <script src="script.js"></script>
 </body>
